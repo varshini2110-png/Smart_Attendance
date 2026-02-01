@@ -8,10 +8,10 @@ function onScanSuccess(decodedText) {
         return;
     }
 
-    if (Date.now() > expiry) {
-        document.getElementById("result").innerHTML = "❌ QR Expired";
-        return;
-    }
+    //if (Date.now() > expiry) {
+        //document.getElementById("result").innerHTML = "❌ QR Expired";
+        //return;
+    // }
 
     if (decodedText === validQR) {
         let list = JSON.parse(localStorage.getItem("marked")) || [];
@@ -37,3 +37,4 @@ let scanner = new Html5QrcodeScanner(
 );
 
 scanner.render(onScanSuccess);
+
