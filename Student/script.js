@@ -1,42 +1,45 @@
-function onScanSuccess(decodedText) {
-    let name = document.getElementById("studentName").value;
-    let validQR = localStorage.getItem("attendanceSession");
-    let expiry = localStorage.getItem("expiryTime");
+// ===== Student Attendance Script =====
 
-    if (name === "") {
-        alert("Enter your name first");
-        return;
-    }
+// Get elements
+const nameInput = document.getElementById("studentName");
+const resultBox = document.getElementById("result");
 
-    //if (Date.now() > expiry) {
-        //document.getElementById("result").innerHTML = "❌ QR Expired";
-        //return;
-    // }
-
-    if (decodedText === validQR) {
-        let list = JSON.parse(localStorage.getItem("marked")) || [];
-
-        if (list.includes(name)) {
-            document.getElementById("result").innerHTML = "⚠ Already marked";
-            return;
-        }
-
-        list.push(name);
-        localStorage.setItem("marked", JSON.stringify(list));
-
-        document.getElementById("result").innerHTML =
-            "✅ Attendance marked for <b>" + name + "</b>";
-    } else {
-        document.getElementById("result").innerHTML = "❌ Invalid QR";
-    }
-}
-
-let scanner = new Html5QrcodeScanner(
-    "reader",
-    { fps: 10, qrbox: 200 }
+// Create QR scanner
+let html5QrcodeScanner = new Html5QrcodeScanner(
+  "qr-reader",
+  {
+    fps: 10,
+    qrbox: 250
+  },
+  false
 );
 
-scanner.render(onScanSuccess);
+// When QR scan is successful
+function onScanSuccess(decodedText, decodedResult) {
+  const studentName = nameInput.value.trim();
 
+  // Check student name
+  if (studentName === "") {
+    resultBox.innerHTML = "❌ Please enter your name before scanning";
+    resultBox.style.color = "red";
+    return;
+  }
 
+  // SUCCESS – mark attendance
+  resultBox.innerHTML = `✅ Attendance marked successfully for <b>${studentName}</b>`;
+  resultBox.style.color = "green";
 
+  console.log("QR Scanned:", decodedText);
+  console.log("Student:", studentName);
+
+  // Stop scanning after success
+  html5QrcodeScanner.clear();
+}
+
+// When scan fails (ignore errors)
+function onScanFailure(error) {
+  // Do nothing (prevents Invalid QR spam)
+}
+
+// Start scanner
+html5QrcodeScanner.render(onScanSuccess, onScanFailure);
