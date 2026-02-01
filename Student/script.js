@@ -39,3 +39,4 @@ let scanner = new Html5QrcodeScanner(
 scanner.render(onScanSuccess);
 
 
+
